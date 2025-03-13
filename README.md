@@ -1,7 +1,7 @@
 # 📚 Learning Management System (LMS)
 
 ## 📖 Overview  
-The **School Management System (SMS)** is a web-based platform designed to manage various academic and administrative tasks in educational institutions. It simplifies student management, teacher assignments, exam tracking, communication, and extracurricular activities.
+The **Learning Management System (LMS)** is a web-based platform designed to manage various academic and administrative tasks in educational institutions. It simplifies student management, teacher assignments, exam tracking, communication, and extracurricular activities.
 
 ## 🚀 Features  
 
