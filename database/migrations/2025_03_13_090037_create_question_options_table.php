@@ -12,18 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('question_options', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('question_id')
-                  ->constrained('questions')
-                  ->cascadeOnDelete()
-                  ->index();
-
+            $table->id(); // Standard Laravel 'id' instead of 'option_id'
+            $table->foreignId('question_id')->constrained('questions');
             $table->text('option_text');
-
-            $table->boolean('is_correct')->default(false); // تعيين القيمة الافتراضية إلى false
-
-            $table->timestamps(); 
+            $table->boolean('is_correct');
+            $table->timestamps(); // Adding timestamps for consistency
         });
 
     }

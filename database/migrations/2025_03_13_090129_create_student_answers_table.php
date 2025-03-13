@@ -12,31 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('student_answers', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('student_id')
-                  ->constrained('students')
-                  ->cascadeOnDelete()
-                  ->index();
-
-            $table->foreignId('question_id')
-                  ->constrained('questions')
-                  ->cascadeOnDelete()
-                  ->index();
-
-            $table->foreignId('selected_option_id')
-                  ->nullable()
-                  ->constrained('question_options')
-                  ->cascadeOnDelete()
-                  ->index();
-
+            $table->id(); // Standard Laravel 'id' instead of 'answer_id'
+            $table->foreignId('student_id')->constrained('students');
+            $table->foreignId('question_id')->constrained('questions');
+            $table->foreignId('selected_option_id')->nullable()->constrained('question_options');
             $table->text('essay_answer')->nullable();
-
-            $table->boolean('is_correct')->default(false);
-
-            $table->timestamp('answered_at')->useCurrent();
-
-            $table->timestamps();
+            $table->boolean('is_correct')->nullable();
+            $table->timestamps(); // Using timestamps() instead of just answered_at
         });
 
     }

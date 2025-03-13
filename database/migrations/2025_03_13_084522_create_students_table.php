@@ -13,19 +13,22 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
+
+            // Explicitly define constraint name for user_id
             $table->foreignId('user_id')
                   ->constrained('users')
-                  ->cascadeOnDelete()
-                  ->index();
+                  ->cascadeOnDelete();
 
-            $table->foreignId('parent_id')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete()
-                  ->index();
+            // Use a completely different approach for the second foreign key
+            // to avoid any possibility of duplicate constraint names
+            $table->unsignedBigInteger('parent_id')->nullable()->index();
+            // Add the constraint with an explicit name
+            $table->foreign('parent_id', 'students_parent_user_foreign')
+                  ->references('id')
+                  ->on('users')
+                  ->nullOnDelete();
 
-            $table->string('grade_level', 50)->nullable(); 
-
+            $table->string('grade_level', 50)->nullable();
             $table->timestamps();
         });
     }

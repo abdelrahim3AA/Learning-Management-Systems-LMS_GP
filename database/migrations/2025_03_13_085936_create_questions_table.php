@@ -12,18 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('questions', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('lesson_id')
-                  ->constrained('lessons')
-                  ->cascadeOnDelete()
-                  ->index();
-
+            $table->id(); // Standard Laravel 'id' instead of 'question_id'
+            $table->foreignId('lesson_id')->constrained('lessons');
             $table->text('question_text');
-
             $table->enum('question_type', ['mcq', 'checkbox', 'true_false', 'short_answer', 'essay']);
-
-            $table->timestamps();
+            $table->timestamps(); // Using timestamps() instead of just created_at
         });
 
     }

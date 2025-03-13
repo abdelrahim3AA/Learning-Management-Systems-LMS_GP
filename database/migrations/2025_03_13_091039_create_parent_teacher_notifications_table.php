@@ -12,15 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('parent_teacher_notifications', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('recipient_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('conversation_id')->constrained('parent_teacher_conversations')->cascadeOnDelete();
-
+            $table->id(); // Standard Laravel 'id' instead of 'notification_id'
+            $table->foreignId('recipient_id')->constrained('users');
+            $table->foreignId('conversation_id')->constrained('parent_teacher_conversations');
             $table->string('message_preview');
             $table->boolean('is_read')->default(false);
-
-            $table->timestamps(); 
+            $table->timestamps(); // Using timestamps() instead of just created_at
         });
 
     }

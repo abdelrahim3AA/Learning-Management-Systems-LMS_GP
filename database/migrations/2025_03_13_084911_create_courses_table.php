@@ -12,16 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('courses', function (Blueprint $table) {
-            $table->id(); 
-
-            $table->string('title', 255);
+            $table->id(); // Standard Laravel 'id' instead of 'course_id'
+            $table->string('title');
             $table->text('description')->nullable();
-
-            $table->foreignId('teacher_id')
-                  ->constrained('teachers')
-                  ->cascadeOnDelete()
-                  ->index();
-
+            $table->foreignId('teacher_id')->constrained('teachers');
             $table->timestamps();
         });
 

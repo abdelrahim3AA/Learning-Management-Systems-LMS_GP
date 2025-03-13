@@ -12,21 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('course_enrollments', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('student_id')
-                  ->constrained('students')
-                  ->cascadeOnDelete()
-                  ->index(); 
-
-            $table->foreignId('course_id')
-                  ->constrained('courses')
-                  ->cascadeOnDelete()
-                  ->index(); 
-
+            $table->id(); // Standard Laravel 'id' instead of 'enrollment_id'
+            $table->foreignId('student_id')->constrained('students');
+            $table->foreignId('course_id')->constrained('courses');
             $table->timestamp('enrolled_at')->useCurrent();
-
-            $table->unique(['student_id', 'course_id']); // منع تسجيل الطالب في نفس الكورس أكثر من مرة
+            $table->timestamps(); // Adding timestamps for consistency
         });
 
     }

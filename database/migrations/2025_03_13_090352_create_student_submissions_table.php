@@ -12,22 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('student_submissions', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('student_id')
-                  ->constrained('students')
-                  ->cascadeOnDelete()
-                  ->index();
-
-            $table->foreignId('assignment_id')
-                  ->constrained('assignments')
-                  ->cascadeOnDelete()
-                  ->index();
-
+            $table->id(); // Standard Laravel 'id' instead of 'submission_id'
+            $table->foreignId('student_id')->constrained('students');
+            $table->foreignId('assignment_id')->constrained('assignments');
             $table->string('file_path')->nullable();
             $table->text('submission_text')->nullable();
-
-            $table->timestamps();
+            $table->timestamps(); // Using timestamps() instead of just submitted_at
         });
 
     }

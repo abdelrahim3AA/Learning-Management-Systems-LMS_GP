@@ -12,17 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('lessons', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('course_id')
-                  ->constrained('courses')
-                  ->cascadeOnDelete()
-                  ->index();
-
-            $table->string('title', 255);
+            $table->id(); // Standard Laravel 'id' instead of 'lesson_id'
+            $table->foreignId('course_id')->constrained('courses');
+            $table->string('title');
             $table->text('content');
-
-            $table->timestamps();
+            $table->timestamps(); // Using timestamps() instead of just created_at
         });
 
     }

@@ -12,20 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('groups', function (Blueprint $table) {
-            $table->id();
-
+            $table->id(); // Standard Laravel 'id' instead of 'group_id'
             $table->string('title');
             $table->text('description')->nullable();
-
-            $table->foreignId('teacher_id')
-                  ->constrained('teachers')
-                  ->cascadeOnDelete()
-                  ->index();
-
+            $table->foreignId('teacher_id')->constrained('teachers');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
-
-            $table->timestamps();
+            $table->timestamps(); // Adding timestamps for consistency
         });
 
     }

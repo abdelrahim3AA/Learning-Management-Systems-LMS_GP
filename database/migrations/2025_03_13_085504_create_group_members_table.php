@@ -12,21 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('group_members', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('student_id')
-                  ->constrained('students')
-                  ->cascadeOnDelete()
-                  ->index();
-
-            $table->foreignId('group_id')
-                  ->constrained('groups')
-                  ->cascadeOnDelete()
-                  ->index();
-
-            $table->unique(['student_id', 'group_id']); // منع انضمام الطالب لنفس المجموعة أكثر من مرة
-
-            $table->timestamps();
+            $table->id(); // Standard Laravel 'id' instead of 'member_id'
+            $table->foreignId('student_id')->constrained('students');
+            $table->foreignId('group_id')->constrained('groups');
+            $table->timestamps(); // Adding timestamps for consistency
         });
 
     }

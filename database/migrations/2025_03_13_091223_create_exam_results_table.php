@@ -12,15 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('exam_results', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
-            $table->foreignId('exam_id')->constrained('exams')->cascadeOnDelete();
-
-            $table->decimal('score', 5, 2);
-            $table->decimal('total_marks', 5, 2);
-
-            $table->timestamps();
+            $table->id(); // Standard Laravel 'id' instead of 'result_id'
+            $table->foreignId('student_id')->constrained('students');
+            $table->foreignId('exam_id')->constrained('exams');
+            $table->float('score');
+            $table->float('total_marks');
+            $table->timestamps(); // Using timestamps() instead of just graded_at
         });
 
     }

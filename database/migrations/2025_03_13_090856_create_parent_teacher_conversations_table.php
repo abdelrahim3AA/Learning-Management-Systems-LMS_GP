@@ -12,12 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('parent_teacher_conversations', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('parent_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('teacher_id')->constrained('teachers')->cascadeOnDelete();
-
-            $table->timestamps(); 
+            $table->id(); // Standard Laravel 'id' instead of 'conversation_id'
+            $table->foreignId('parent_id')->constrained('users');
+            $table->foreignId('teacher_id')->constrained('teachers');
+            $table->timestamps(); // Using timestamps() instead of just created_at
         });
 
     }

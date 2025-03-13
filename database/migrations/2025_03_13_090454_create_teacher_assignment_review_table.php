@@ -11,23 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teacher_assignment_reviews', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('submission_id')
-                  ->constrained('student_submissions')
-                  ->cascadeOnDelete()
-                  ->index();
-
-            $table->foreignId('teacher_id')
-                  ->constrained('teachers')
-                  ->cascadeOnDelete()
-                  ->index();
-
+        Schema::create('teacher_assignment_review', function (Blueprint $table) {
+            $table->id(); // Standard Laravel 'id' instead of 'review_id'
+            $table->foreignId('submission_id')->constrained('student_submissions');
+            $table->foreignId('teacher_id')->constrained('teachers');
             $table->text('feedback');
-            $table->decimal('score', 5, 2);
-
-            $table->timestamps(); 
+            $table->float('score');
+            $table->timestamps(); // Using timestamps() instead of just reviewed_at
         });
 
     }

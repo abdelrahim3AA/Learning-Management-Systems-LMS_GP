@@ -12,20 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('complaints_suggestions', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('user_id')
-                  ->nullable()
-                  ->constrained('users')
-                  ->cascadeOnDelete()
-                  ->index();
-
+            $table->id(); // Standard Laravel 'id' instead of 'complaint_id'
+            $table->foreignId('user_id')->constrained('users');
             $table->enum('type', ['complaint', 'suggestion']);
             $table->text('message');
-
             $table->enum('status', ['pending', 'resolved'])->default('pending');
-
-            $table->timestamps();
+            $table->timestamps(); // Using timestamps() instead of just submitted_at
         });
 
     }

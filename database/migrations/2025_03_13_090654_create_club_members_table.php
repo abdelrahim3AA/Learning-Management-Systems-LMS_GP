@@ -12,13 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('club_members', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
-            $table->foreignId('club_id')->constrained('clubs')->cascadeOnDelete();
-
-            $table->unique(['student_id', 'club_id']); // منع التكرار
-            $table->timestamps(); 
+            $table->id(); // Standard Laravel 'id' instead of 'member_id'
+            $table->foreignId('student_id')->constrained('students');
+            $table->foreignId('club_id')->constrained('clubs');
+            $table->timestamps(); // Adding timestamps for consistency
         });
 
     }

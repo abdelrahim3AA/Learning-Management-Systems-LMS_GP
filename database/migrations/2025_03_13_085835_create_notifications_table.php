@@ -12,19 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('user_id')
-                  ->nullable()
-                  ->constrained('users')
-                  ->cascadeOnDelete()
-                  ->index();
-
+            $table->id(); // Standard Laravel 'id' instead of 'notification_id'
+            $table->foreignId('user_id')->constrained('users');
             $table->text('message');
-
             $table->boolean('is_read')->default(false);
-
-            $table->timestamps();
+            $table->timestamps(); // Using timestamps() instead of just created_at
         });
 
     }
