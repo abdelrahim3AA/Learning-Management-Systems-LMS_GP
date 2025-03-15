@@ -14,28 +14,23 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
 
-            // Explicitly define constraint name for user_id
-            $table->foreignId('user_id')
-                  ->constrained('users')
-                  ->cascadeOnDelete();
+            // Ensure only students can be added
+            $table->foreignId('student_id')
+            ->constrained('users')
+            ->cascadeOnDelete()
+            ->unique(); // Prevents duplicate students
 
-            // Use a completely different approach for the second foreign key
-            // to avoid any possibility of duplicate constraint names
             $table->unsignedBigInteger('parent_id')->nullable()->index();
-            // Add the constraint with an explicit name
             $table->foreign('parent_id', 'students_parent_user_foreign')
-                  ->references('id')
-                  ->on('users')
-                  ->nullOnDelete();
+                ->references('id')
+                ->on('users')
+                ->nullOnDelete();
 
             $table->string('grade_level', 50)->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('students');
