@@ -5,18 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Lesson extends Model
+class Assignment extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'course_id',
+        'lesson_id',
         'title',
-        'content',
+        'description',
+        'due_date',
     ];
 
-    public function course()
+    // Relationship
+    public function lesson()
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Lesson::class);
     }
 }

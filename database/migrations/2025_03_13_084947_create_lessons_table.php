@@ -18,7 +18,6 @@ return new class extends Migration
             $table->text('content');
             $table->timestamps(); // Using timestamps() instead of just created_at
         });
-
     }
 
     /**

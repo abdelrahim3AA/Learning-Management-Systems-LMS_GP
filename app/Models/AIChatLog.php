@@ -5,18 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Lesson extends Model
+class AIChatLog extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'course_id',
-        'title',
-        'content',
+        'user_id',
+        'message',
     ];
 
-    public function course()
+    // Relationship to the User model
+    public function user()
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(User::class);
     }
 }

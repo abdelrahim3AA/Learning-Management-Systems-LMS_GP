@@ -6,15 +6,17 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Http\Resources\UserResource;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
+        // Validate
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'password' => 'required|min:6|confirmed',
         ]);
 
         $user = User::create([
@@ -23,7 +25,14 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['message' => 'User registered successfully'], 201);
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return response()->json([
+            'status' => 201,
+            'message' => 'User registered successfully',
+            'user' => $user,
+            'token' => $token
+        ], 201);
     }
 
     public function login(Request $request)
@@ -36,18 +45,32 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages(['email' => 'Invalid credentials']);
+            return response()->json([
+                'message' => 'Invalid credentials'
+            ], 401);
         }
 
         $token = $user->createToken('api-token')->plainTextToken;
 
-        return response()->json(['token' => $token], 200);
+        return response()->json([
+            'message' => 'Login successful',
+            'token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => 60 * 60 * 24 * 7,
+            'user' => new UserResource($user)
+        ], 200);
     }
 
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
+        $user = $request->user();
 
-        return response()->json(['message' => 'Logged out successfully']);
+        if ($user) {
+            $user->tokens()->delete(); 
+        }
+
+        return response()->json([
+            'message' => 'Logout successful'
+        ], 200);
     }
 }
