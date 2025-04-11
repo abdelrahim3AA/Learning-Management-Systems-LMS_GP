@@ -13,6 +13,7 @@ class AIChatLogResource extends JsonResource
             'id' => $this->id,
             'user' => new UserResource($this->whenLoaded('user')),
             'message' => $this->message,
+            'is_ai' => $this->is_ai,
             'created_at' => $this->created_at->toDateTimeString(),
         ];
     }

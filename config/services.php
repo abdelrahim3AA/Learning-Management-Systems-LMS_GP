@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'openrouter' => [
+    'api_key' => env('OPENROUTER_API_KEY'),
+    'site_url' => env('APP_URL', 'http://localhost'),
+    'site_name' => env('APP_NAME', 'Laravel AI Chat'),
+    ],
+
 ];
