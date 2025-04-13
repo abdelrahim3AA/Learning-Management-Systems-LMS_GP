@@ -14,14 +14,19 @@ class StudentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $student = new UserResource($this->student);
-        $parent = new UserResource($this->parent);
         return [
             'id' => $this->id,
-            'student' => $student->name,
-            'parent' => $parent->name ?? null,
+            'student_id' => $this->student_id,
+            'parent_id' => $this->parent_id,
             'grade_level' => $this->grade_level,
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+
+            // Include related data when available
+            'user' => $this->whenLoaded('user'),
+            'parent' => $this->whenLoaded('parent'),
+            'enrollments' => $this->whenLoaded('enrollments'),
+            'lesson_progress' => $this->whenLoaded('lessonProgress'),
         ];
     }
 }

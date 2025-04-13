@@ -19,19 +19,49 @@ Route::get('/', function () {
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
 // Sanctum
 Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+
 Route::apiResource('users', UserController::class);
+
+
+
 Route::apiResource('students', StudentController::class);
+// Additional student-specific functionalities
+Route::prefix('students/{student}')->group(function () {
+    // Profile and courses
+    Route::get('/profile', [StudentController::class, 'profile']);
+    Route::get('/courses', [StudentController::class, 'courses']);
+
+    // Course enrollment
+    Route::post('/courses/{course}/enroll', [StudentController::class, 'enroll']);
+    Route::delete('/courses/{course}/unenroll', [StudentController::class, 'unenroll']);
+
+    // Lesson progress
+    Route::get('/lessons/{lesson}/progress', [StudentController::class, 'lessonProgress']);
+    Route::post('/lessons/{lesson}/progress', [StudentController::class, 'updateProgress']);
+    Route::get('/progress', [StudentController::class, 'allProgress']);
+});
+
+
+
 Route::apiResource('teachers', TeacherController::class);
+
+
 Route::apiResource('courses', CourseController::class);
+Route::get('/courses/{course}/lessons', [CourseController::class, 'lessons']);
+
+
+
 Route::apiResource('lessons', LessonController::class);
 Route::apiResource('lesson-progress', LessonProgressController::class);
+
+
+
 // AI Chat Log Routes
 Route::middleware('auth:sanctum')->group(function () {
     // Get all chat logs
@@ -53,6 +83,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Delete a specific chat log
     Route::delete('/chat-logs/{aiChatLog}', [AIChatLogController::class, 'destroy']);
 });
+
+
 
 RateLimiter::for('api', function (Request $request) {
     return Limit::perMinute(60);

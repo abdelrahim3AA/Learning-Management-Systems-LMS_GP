@@ -1,52 +1,52 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\API;
 
-use App\Models\Course;
-use App\Models\Teacher;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use App\Http\Resources\CourseResource;
+use App\Models\Course;
+use App\Models\Lesson;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class CourseController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the courses.
      */
     public function index()
     {
-        return Teacher::all(); 
+        $courses = Course::with('teacher.user')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => CourseResource::collection($courses)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
+     * Display the specified course.
      */
     public function show(Course $course)
     {
-        //
+        $course->load('teacher.user', 'lessons');
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $course
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Get all lessons for a specific course.
      */
-    public function update(Request $request, Course $course)
+    public function lessons(Course $course)
     {
-        //
-    }
+        $lessons = $course->lessons;
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Course $course)
-    {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => $lessons
+        ]);
     }
 }

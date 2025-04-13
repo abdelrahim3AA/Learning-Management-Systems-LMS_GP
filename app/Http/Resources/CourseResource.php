@@ -20,9 +20,6 @@ class CourseResource extends JsonResource
 
             // Include teacher details if loaded
             'teacher' => new TeacherResource($this->whenLoaded('teacher')),
-
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 }

@@ -15,13 +15,45 @@ class Student extends Model
         'grade_level',
     ];
 
-    public function student ()
+    public function student()
     {
         return $this->belongsTo(User::class, 'student_id');
     }
 
-    public function parent ()
+    public function parent()
     {
         return $this->belongsTo(User::class, 'parent_id');
+    }
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class)->withTimestamps();
+    }
+
+    public function progress()
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
+
+    public function lessonsProgress()
+    {
+        return $this->belongsToMany(Lesson::class, 'lesson_progress')
+            ->withPivot('completed_at', 'status', 'score')
+            ->withTimestamps();
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(CourseEnrollment::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
     }
 }
