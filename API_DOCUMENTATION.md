@@ -8,6 +8,7 @@
 - [Exams API](#exams-api)
 - [Exam Results API](#exam-results-api)
 - [Error Handling](#error-handling)
+- [Parent-Teacher Conversations API](#parent-teacher-conversations-api)
 
 ## Authentication
 All endpoints require authentication using Laravel Sanctum. Include the authentication token in the request header:
@@ -296,3 +297,204 @@ Current API Version: v1
 
 ## Support
 For any API related queries, please contact the development team.
+
+## Parent-Teacher Conversations API
+Base URL: `/api/parent-teacher-conversations`
+
+### Basic CRUD Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | List all conversations (paginated) |
+| POST | `/` | Create new conversation |
+| GET | `/{conversation}` | Get specific conversation |
+| DELETE | `/{conversation}` | Delete conversation |
+
+### Parent-Specific Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/parent/{parentId}/all` | Get all conversations for a parent |
+
+### Teacher-Specific Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/teacher/{teacherId}/all` | Get all conversations for a teacher |
+
+### Additional Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/{conversation}/mark-read` | Mark conversation as read |
+| GET | `/unread/count` | Get unread conversations count |
+| GET | `/recent/{userId}/{userType}` | Get recent conversations |
+| POST | `/{conversation}/archive` | Archive a conversation |
+| POST | `/{conversation}/restore` | Restore archived conversation |
+
+### Request/Response Examples
+
+#### List All Conversations
+```json
+// GET /api/parent-teacher-conversations
+// Response
+{
+    "status": 200,
+    "data": [
+        {
+            "id": 1,
+            "parent_id": 1,
+            "teacher_id": 2,
+            "is_read": false,
+            "is_archived": false,
+            "created_at": "2024-03-20T12:00:00Z",
+            "updated_at": "2024-03-20T12:00:00Z",
+            "parent": {
+                "id": 1,
+                "name": "John Doe",
+                // ... other parent details
+            },
+            "teacher": {
+                "id": 2,
+                "name": "Jane Smith",
+                // ... other teacher details
+            }
+        }
+        // ... more conversations
+    ],
+    "pagination": {
+        "current_page": 1,
+        "last_page": 5,
+        "total": 50
+    }
+}
+```
+
+#### Create New Conversation
+```json
+// POST /api/parent-teacher-conversations
+// Request
+{
+    "parent_id": 1,
+    "teacher_id": 2
+}
+
+// Response
+{
+    "status": 201,
+    "data": {
+        "id": 1,
+        "parent_id": 1,
+        "teacher_id": 2,
+        "is_read": false,
+        "is_archived": false,
+        "created_at": "2024-03-20T12:00:00Z",
+        "updated_at": "2024-03-20T12:00:00Z"
+    }
+}
+```
+
+#### Get Parent's Conversations
+```json
+// GET /api/parent-teacher-conversations/parent/1/all
+// Response
+{
+    "status": 200,
+    "data": [
+        {
+            "id": 1,
+            "teacher_id": 2,
+            "is_read": false,
+            "is_archived": false,
+            "messages": [
+                // ... messages in conversation
+            ],
+            "teacher": {
+                "id": 2,
+                "name": "Jane Smith",
+                // ... other teacher details
+            }
+        }
+        // ... more conversations
+    ]
+}
+```
+
+#### Get Unread Count
+```json
+// GET /api/parent-teacher-conversations/unread/count
+// Request
+{
+    "user_id": 1,
+    "user_type": "parent"
+}
+
+// Response
+{
+    "status": 200,
+    "data": {
+        "unread_count": 5
+    }
+}
+```
+
+#### Mark Conversation as Read
+```json
+// POST /api/parent-teacher-conversations/1/mark-read
+// Response
+{
+    "status": 200,
+    "message": "Conversation marked as read",
+    "data": {
+        "id": 1,
+        "is_read": true,
+        // ... other conversation details
+    }
+}
+```
+
+#### Archive Conversation
+```json
+// POST /api/parent-teacher-conversations/1/archive
+// Response
+{
+    "status": 200,
+    "message": "Conversation archived successfully",
+    "data": {
+        "id": 1,
+        "is_archived": true,
+        // ... other conversation details
+    }
+}
+```
+
+### Error Responses
+
+#### Invalid Request
+```json
+{
+    "status": 422,
+    "errors": {
+        "parent_id": ["The parent id field is required."],
+        "teacher_id": ["The teacher id must be a valid teacher."]
+    }
+}
+```
+
+#### Not Found
+```json
+{
+    "status": 404,
+    "message": "Conversation not found."
+}
+```
+
+### Query Parameters
+
+#### Get Recent Conversations
+- `userId`: The ID of the user (parent or teacher)
+- `userType`: Type of user ('parent' or 'teacher')
+- `limit`: (optional) Number of recent conversations to return (default: 5)
+
+### Notes
+1. All endpoints require authentication
+2. Conversations are automatically ordered by latest update
+3. Parent and teacher IDs are validated against the database
+4. The `is_read` flag is automatically set to `false` for new conversations
+5. Archived conversations can be restored using the restore endpoint

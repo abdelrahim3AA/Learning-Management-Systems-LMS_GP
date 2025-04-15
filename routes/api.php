@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ExamController;
 use App\Http\Controllers\Api\ExamResultController;
 use App\Http\Controllers\Api\LessonController;
 use App\Http\Controllers\Api\LessonProgressController;
+use App\Http\Controllers\Api\ParentTeacherConversationController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\QuestionOptionController;
 use App\Http\Controllers\Api\StudentController;
@@ -211,6 +212,28 @@ Route::prefix('exam-results')->group(function () {
     Route::get('/exam/{examId}/all', [ExamResultController::class, 'getResultsByExamId']);
     Route::get('/exam/{examId}/statistics', [ExamResultController::class, 'getExamStatistics']);
     Route::get('/exam/{examId}/top-performers', [ExamResultController::class, 'getTopPerformers']);
+});
+
+// Parent-Teacher Conversations Routes
+Route::prefix('parent-teacher-conversations')->group(function () {
+    // Basic CRUD routes
+    Route::get('/', [ParentTeacherConversationController::class, 'index']);
+    Route::post('/', [ParentTeacherConversationController::class, 'store']);
+    Route::get('/{conversation}', [ParentTeacherConversationController::class, 'show']);
+    Route::delete('/{conversation}', [ParentTeacherConversationController::class, 'destroy']);
+
+    // Parent specific routes
+    Route::get('/parent/{parentId}/all', [ParentTeacherConversationController::class, 'getParentConversations']);
+
+    // Teacher specific routes
+    Route::get('/teacher/{teacherId}/all', [ParentTeacherConversationController::class, 'getTeacherConversations']);
+
+    // Additional functionality routes
+    Route::post('/{conversation}/mark-read', [ParentTeacherConversationController::class, 'markAsRead']);
+    Route::get('/unread/count', [ParentTeacherConversationController::class, 'getUnreadCount']);
+    Route::get('/recent/{userId}/{userType}', [ParentTeacherConversationController::class, 'getRecentConversations']);
+    Route::post('/{conversation}/archive', [ParentTeacherConversationController::class, 'archiveConversation']);
+    Route::post('/{conversation}/restore', [ParentTeacherConversationController::class, 'restoreConversation']);
 });
 
 RateLimiter::for('api', function (Request $request) {
