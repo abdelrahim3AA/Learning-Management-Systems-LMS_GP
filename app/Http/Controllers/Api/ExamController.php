@@ -1,9 +1,9 @@
 <?php
+namespace App\Http\Controllers\Api;
 
-namespace App\Http\Controllers;
-
-use App\Models\Exam;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\ExamResource;
+use App\Models\Exam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +21,7 @@ class ExamController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'course_id' => 'required|exists:courses,id',
-            'title' => 'required|string|max:255',
+            'title'     => 'required|string|max:255',
             'exam_date' => 'required|date',
         ]);
 
@@ -45,7 +45,7 @@ class ExamController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'course_id' => 'required|exists:courses,id',
-            'title' => 'required|string|max:255',
+            'title'     => 'required|string|max:255',
             'exam_date' => 'required|date',
         ]);
 
@@ -64,5 +64,97 @@ class ExamController extends Controller
         $exam = Exam::findOrFail($id);
         $exam->delete();
         return response()->json(null, 204);
+    }
+
+    /**
+     * Get exams by course ID
+     */
+    public function getExamsByCourseId($courseId)
+    {
+        $exams = Exam::where('course_id', $courseId)
+            ->with('course')
+            ->orderBy('exam_date', 'asc')
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'data'   => ExamResource::collection($exams),
+        ]);
+    }
+
+    /**
+     * Get upcoming exams
+     */
+    public function getUpcomingExams()
+    {
+        $exams = Exam::where('exam_date', '>=', now())
+            ->with('course')
+            ->orderBy('exam_date', 'asc')
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'data'   => ExamResource::collection($exams),
+        ]);
+    }
+
+    /**
+     * Get past exams
+     */
+    public function getPastExams()
+    {
+        $exams = Exam::where('exam_date', '<', now())
+            ->with('course')
+            ->orderBy('exam_date', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'data'   => ExamResource::collection($exams),
+        ]);
+    }
+
+    /**
+     * Get exams by date range
+     */
+    public function getExamsByDateRange(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'required|date',
+            'end_date'   => 'required|date|after_or_equal:start_date',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $exams = Exam::whereBetween('exam_date', [$request->start_date, $request->end_date])
+            ->with('course')
+            ->orderBy('exam_date', 'asc')
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'data'   => ExamResource::collection($exams),
+        ]);
+    }
+
+    /**
+     * Get today's exams
+     */
+    public function getTodayExams()
+    {
+        $exams = Exam::whereDate('exam_date', today())
+            ->with('course')
+            ->orderBy('exam_date', 'asc')
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'data'   => ExamResource::collection($exams),
+        ]);
     }
 }

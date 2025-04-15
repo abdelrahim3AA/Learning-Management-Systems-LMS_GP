@@ -89,4 +89,36 @@ class TeacherAssignmentReviewController extends Controller
             'message' => 'Deleted.',
         ], 200);
     }
+
+    public function getReviewsByTeacherId($teacherId)
+    {
+        $reviews = TeacherAssignmentReview::where('teacher_id', $teacherId)->get();
+        return response()->json($reviews);
+    }
+
+    public function getReviewsByStudentId($studentId)
+    {
+        $reviews = TeacherAssignmentReview::where('student_id', $studentId)->get();
+        return response()->json($reviews);
+    }
+
+    public function getReviewsByCourseId($courseId)
+    {
+        $reviews = TeacherAssignmentReview::where('course_id', $courseId)->get();
+        return response()->json($reviews);
+    }
+
+    public function getReviewsByAssignmentId($assignmentId)
+    {
+        $reviews = TeacherAssignmentReview::where('assignment_id', $assignmentId)->get();
+        return response()->json($reviews);
+    }
+
+    public function getReviewsBySubmissionId($submissionId)
+    {
+        $reviews = TeacherAssignmentReview::where('submission_id', $submissionId)->get();
+        return response()->json($reviews);
+    }
+
+    
 }

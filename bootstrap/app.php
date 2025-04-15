@@ -20,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
         ]);
     })
-    
+
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

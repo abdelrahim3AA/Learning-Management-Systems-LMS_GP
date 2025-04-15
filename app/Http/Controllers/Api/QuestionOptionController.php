@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -17,13 +16,13 @@ class QuestionOptionController extends Controller
         $options = QuestionOption::with('question')->latest()->paginate(10);
 
         return response()->json([
-            'status' => 200,
-            'data' => QuestionOptionResource::collection($options),
+            'status'     => 200,
+            'data'       => QuestionOptionResource::collection($options),
             'pagination' => [
                 'current_page' => $options->currentPage(),
-                'last_page' => $options->lastPage(),
-                'total' => $options->total(),
-            ]
+                'last_page'    => $options->lastPage(),
+                'total'        => $options->total(),
+            ],
         ]);
     }
 
@@ -35,18 +34,18 @@ class QuestionOptionController extends Controller
         $request->validate([
             'question_id' => 'required|exists:questions,id',
             'option_text' => 'required|string',
-            'is_correct' => 'required|boolean',
+            'is_correct'  => 'required|boolean',
         ]);
 
         $option = QuestionOption::create([
             'question_id' => $request->question_id,
             'option_text' => $request->option_text,
-            'is_correct' => $request->is_correct,
+            'is_correct'  => $request->is_correct,
         ]);
 
         return response()->json([
             'status' => 201,
-            'data' => new QuestionOptionResource($option),
+            'data'   => new QuestionOptionResource($option),
         ], 201);
     }
 
@@ -57,7 +56,7 @@ class QuestionOptionController extends Controller
     {
         return response()->json([
             'status' => 200,
-            'data' => new QuestionOptionResource($option),
+            'data'   => new QuestionOptionResource($option),
         ], 200);
     }
 
@@ -68,15 +67,15 @@ class QuestionOptionController extends Controller
     {
         $request->validate([
             'option_text' => 'sometimes|required|string',
-            'is_correct' => 'sometimes|required|boolean',
+            'is_correct'  => 'sometimes|required|boolean',
         ]);
 
         $option->update($request->only('option_text', 'is_correct'));
 
         return response()->json([
-            'status' => 200,
+            'status'  => 200,
             'message' => 'Option updated successfully.',
-            'data' => new QuestionOptionResource($option),
+            'data'    => new QuestionOptionResource($option),
         ], 200);
     }
 
@@ -88,8 +87,52 @@ class QuestionOptionController extends Controller
         $option->delete();
 
         return response()->json([
-            'status' => 200,
+            'status'  => 200,
             'message' => 'Option deleted successfully.',
         ], 200);
+    }
+
+    /**
+     * Get options for a specific question
+     */
+    public function getOptionsByQuestionId($questionId)
+    {
+        $options = QuestionOption::where('question_id', $questionId)
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'data'   => QuestionOptionResource::collection($options),
+        ]);
+    }
+
+    /**
+     * Get correct options for a specific question
+     */
+    public function getCorrectOptionsByQuestionId($questionId)
+    {
+        $options = QuestionOption::where('question_id', $questionId)
+            ->where('is_correct', true)
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'data'   => QuestionOptionResource::collection($options),
+        ]);
+    }
+
+    /**
+     * Get all correct options
+     */
+    public function getAllCorrectOptions()
+    {
+        $options = QuestionOption::where('is_correct', true)
+            ->with('question')
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'data'   => QuestionOptionResource::collection($options),
+        ]);
     }
 }
