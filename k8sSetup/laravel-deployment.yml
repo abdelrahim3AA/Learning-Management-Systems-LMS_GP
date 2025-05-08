@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: laravel-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: laravel
+  template:
+    metadata:
+      labels:
+        app: laravel
+    spec:
+      initContainers:
+        - name: init-storage
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /mnt/storage/app/public && \
+              mkdir -p /mnt/storage/framework/cache && \
+              mkdir -p /mnt/storage/framework/views && \
+              mkdir -p /mnt/storage/framework/sessions && \
+              mkdir -p /mnt/storage/logs && \
+              mkdir -p /mnt/bootstrap-cache && \
+              chown -R 82:82 /mnt/storage && \
+              chmod -R 775 /mnt/storage && \
+              chmod -R 775 /mnt/bootstrap-cache
+          volumeMounts:
+            - name: storage
+              mountPath: /mnt/storage
+            - name: bootstrap-cache
+              mountPath: /mnt/bootstrap-cache
+      containers:
+        - name: laravel
+          image: youssefkali/laravel-lms
+          ports:
+            - containerPort: 80
+          env:
+            - name: APP_BASE_PATH
+              value: "/var/www/html"
+            - name: APP_ENV
+              value: "production"
+            - name: DB_CONNECTION
+              value: "mysql"
+            - name: DB_HOST
+              value: "mysql-service"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: MYSQL_DB
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: MYSQL_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: MYSQL_PASSWORD
+          volumeMounts:
+            - name: storage
+              mountPath: /var/www/html/storage
+            - name: bootstrap-cache
+              mountPath: /var/www/html/bootstrap/cache
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: laravel-pvc
+        - name: bootstrap-cache
+          persistentVolumeClaim:
+            claimName: bootstrap-cache-pvc
